@@ -165,11 +165,9 @@ export default function MenuPage() {
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <h3 className="font-bold text-pista-900 text-xl mb-1 group-hover:text-pista-700 transition">{item.name}</h3>
-                        <p className="text-pista-600 text-xs font-medium">{item.description}</p>
+                        <p className="text-pista-600 text-xs font-medium">{item.category}</p>
                       </div>
                     </div>
-
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{item.details}</p>
 
                     {/* Ingredients */}
                     {item.ingredients && (
