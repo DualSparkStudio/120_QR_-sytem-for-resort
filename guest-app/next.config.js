@@ -16,6 +16,7 @@ const nextConfig = {
         hostname: '**',
       },
     ],
+    unoptimized: true,
   },
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
@@ -28,6 +29,10 @@ const nextConfig = {
         destination: '/admin/:path*',
       },
     ];
+  },
+  // Disable static page generation for pages with dynamic params
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
   },
 };
 
