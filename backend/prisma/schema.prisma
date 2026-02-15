@@ -1,0 +1,430 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ RESORT & MULTI-TENANCY ============
+model Resort {
+  id                String   @id @default(cuid())
+  name              String
+  slug              String   @unique
+  description       String?
+  address           String
+  city              String
+  state             String
+  country           String
+  zipCode           String
+  phone             String
+  email             String
+  website           String?
+  logo              String?
+  banner            String?
+  timezone          String   @default("Asia/Kolkata")
+  currency          String   @default("INR")
+  
+  // Configuration
+  taxPercentage     Float    @default(18)
+  serviceChargePercentage Float @default(0)
+  
+  // Relations
+  rooms             Room[]
+  menus             Menu[]
+  menuItems         MenuItem[]
+  orders            Order[]
+  serviceRequests   ServiceRequest[]
+  staff             Staff[]
+  payments          Payment[]
+  notifications     Notification[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  deletedAt         DateTime?
+
+  @@index([slug])
+  @@index([deletedAt])
+}
+
+// ============ ROOMS ============
+model Room {
+  id                String   @id @default(cuid())
+  resortId          String
+  resort            Resort   @relation(fields: [resortId], references: [id], onDelete: Cascade)
+  
+  roomNumber        String
+  roomType          String   // "deluxe", "suite", "standard", etc.
+  floor             Int
+  capacity          Int
+  qrCode            String   @unique
+  qrCodeUrl         String?
+  
+  // Status
+  status            String   @default("available") // available, occupied, maintenance
+  isActive          Boolean  @default(true)
+  
+  // Relations
+  orders            Order[]
+  serviceRequests   ServiceRequest[]
+  guestSessions     GuestSession[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  deletedAt         DateTime?
+
+  @@unique([resortId, roomNumber])
+  @@index([resortId])
+  @@index([qrCode])
+  @@index([status])
+}
+
+// ============ GUEST SESSIONS ============
+model GuestSession {
+  id                String   @id @default(cuid())
+  roomId            String
+  room              Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  
+  sessionToken      String   @unique
+  guestName         String?
+  guestPhone        String?
+  guestEmail        String?
+  
+  isActive          Boolean  @default(true)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  expiresAt         DateTime
+
+  @@index([roomId])
+  @@index([sessionToken])
+}
+
+// ============ MENU MANAGEMENT ============
+model Menu {
+  id                String   @id @default(cuid())
+  resortId          String
+  resort            Resort   @relation(fields: [resortId], references: [id], onDelete: Cascade)
+  
+  name              String
+  description       String?
+  category          String   // "breakfast", "lunch", "dinner", "beverages", etc.
+  icon              String?
+  
+  isActive          Boolean  @default(true)
+  displayOrder      Int      @default(0)
+  
+  // Relations
+  items             MenuItem[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  deletedAt         DateTime?
+
+  @@unique([resortId, name])
+  @@index([resortId])
+  @@index([category])
+}
+
+model MenuItem {
+  id                String   @id @default(cuid())
+  resortId          String
+  resort            Resort   @relation(fields: [resortId], references: [id], onDelete: Cascade)
+  
+  menuId            String
+  menu              Menu     @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  
+  name              String
+  description       String?
+  image             String?
+  
+  basePrice         Float
+  currency          String   @default("INR")
+  
+  // Variants (e.g., size, spice level)
+  variants          MenuItemVariant[]
+  
+  // Dietary info
+  isVegetarian      Boolean  @default(false)
+  isVegan           Boolean  @default(false)
+  allergens         String?  // JSON array
+  
+  // Availability
+  isAvailable       Boolean  @default(true)
+  preparationTime   Int      @default(15) // in minutes
+  
+  displayOrder      Int      @default(0)
+  
+  // Relations
+  orderItems        OrderItem[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  deletedAt         DateTime?
+
+  @@unique([resortId, menuId, name])
+  @@index([resortId])
+  @@index([menuId])
+  @@index([isAvailable])
+}
+
+model MenuItemVariant {
+  id                String   @id @default(cuid())
+  menuItemId        String
+  menuItem          MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  
+  name              String   // "Size", "Spice Level", etc.
+  options           String   // JSON array of options
+  isRequired        Boolean  @default(false)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([menuItemId])
+}
+
+// ============ ORDERS ============
+model Order {
+  id                String   @id @default(cuid())
+  resortId          String
+  resort            Resort   @relation(fields: [resortId], references: [id], onDelete: Cascade)
+  
+  roomId            String
+  room              Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  
+  orderNumber       String   @unique
+  
+  // Guest info
+  guestName         String?
+  guestPhone        String?
+  guestEmail        String?
+  
+  // Order details
+  items             OrderItem[]
+  specialInstructions String?
+  
+  // Pricing
+  subtotal          Float
+  taxAmount         Float
+  serviceCharge     Float
+  discountAmount    Float    @default(0)
+  totalAmount       Float
+  
+  // Status
+  status            String   @default("pending") // pending, confirmed, preparing, ready, delivered, cancelled
+  paymentStatus     String   @default("pending") // pending, completed, failed, refunded
+  
+  // Payment
+  paymentId         String?
+  payment           Payment? @relation(fields: [paymentId], references: [id])
+  
+  // Delivery
+  deliveryTime      DateTime?
+  estimatedTime     DateTime?
+  
+  // Relations
+  notifications     Notification[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  completedAt       DateTime?
+  cancelledAt       DateTime?
+
+  @@index([resortId])
+  @@index([roomId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id                String   @id @default(cuid())
+  orderId           String
+  order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  menuItemId        String
+  menuItem          MenuItem @relation(fields: [menuItemId], references: [id])
+  
+  quantity          Int
+  price             Float
+  selectedVariants  String?  // JSON
+  specialInstructions String?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([menuItemId])
+}
+
+// ============ SERVICE REQUESTS ============
+model ServiceRequest {
+  id                String   @id @default(cuid())
+  resortId          String
+  resort            Resort   @relation(fields: [resortId], references: [id], onDelete: Cascade)
+  
+  roomId            String
+  room              Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  
+  serviceType       String   // "housekeeping", "laundry", "maintenance", "concierge"
+  description       String
+  priority          String   @default("normal") // low, normal, high, urgent
+  
+  // Status
+  status            String   @default("pending") // pending, assigned, in_progress, completed, cancelled
+  
+  // Assignment
+  assignedStaffId   String?
+  assignedStaff     Staff?   @relation(fields: [assignedStaffId], references: [id])
+  
+  // Timing
+  requestedTime     DateTime?
+  completedTime     DateTime?
+  
+  // Relations
+  notifications     Notification[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([resortId])
+  @@index([roomId])
+  @@index([status])
+  @@index([serviceType])
+}
+
+// ============ PAYMENTS ============
+model Payment {
+  id                String   @id @default(cuid())
+  resortId          String
+  resort            Resort   @relation(fields: [resortId], references: [id], onDelete: Cascade)
+  
+  orderId           String?
+  orders            Order[]
+  
+  // Payment details
+  amount            Float
+  currency          String   @default("INR")
+  paymentMethod     String   // "razorpay", "stripe", "upi", "card", "netbanking"
+  
+  // Gateway references
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  stripePaymentIntentId String?
+  
+  // Status
+  status            String   @default("pending") // pending, completed, failed, refunded
+  
+  // Refund
+  refundAmount      Float    @default(0)
+  refundStatus      String?  // pending, completed, failed
+  refundReason      String?
+  
+  // Metadata
+  metadata          String?  // JSON
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  completedAt       DateTime?
+
+  @@index([resortId])
+  @@index([status])
+  @@index([razorpayPaymentId])
+  @@index([stripePaymentIntentId])
+}
+
+// ============ STAFF ============
+model Staff {
+  id                String   @id @default(cuid())
+  resortId          String
+  resort            Resort   @relation(fields: [resortId], references: [id], onDelete: Cascade)
+  
+  name              String
+  email             String
+  phone             String
+  role              String   // "admin", "manager", "chef", "delivery", "housekeeping"
+  
+  // Authentication
+  passwordHash      String
+  
+  // Status
+  isActive          Boolean  @default(true)
+  
+  // Relations
+  serviceRequests   ServiceRequest[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  lastLoginAt       DateTime?
+
+  @@unique([resortId, email])
+  @@index([resortId])
+  @@index([role])
+}
+
+// ============ NOTIFICATIONS ============
+model Notification {
+  id                String   @id @default(cuid())
+  resortId          String
+  resort            Resort   @relation(fields: [resortId], references: [id], onDelete: Cascade)
+  
+  orderId           String?
+  order             Order?   @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  
+  serviceRequestId  String?
+  serviceRequest    ServiceRequest? @relation(fields: [serviceRequestId], references: [id], onDelete: SetNull)
+  
+  // Notification details
+  type              String   // "order_status", "payment_confirmation", "service_update"
+  title             String
+  message           String
+  
+  // Channels
+  sendViaEmail      Boolean  @default(false)
+  sendViaWhatsApp   Boolean  @default(false)
+  sendViaPush       Boolean  @default(false)
+  
+  // Status
+  status            String   @default("pending") // pending, sent, failed
+  
+  // Recipient
+  recipientPhone    String?
+  recipientEmail    String?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  sentAt            DateTime?
+
+  @@index([resortId])
+  @@index([orderId])
+  @@index([serviceRequestId])
+  @@index([status])
+}
+
+// ============ AUDIT LOGS ============
+model AuditLog {
+  id                String   @id @default(cuid())
+  
+  action            String
+  entity            String
+  entityId          String
+  
+  changes           String?  // JSON
+  
+  userId            String?
+  userEmail         String?
+  
+  ipAddress         String?
+  userAgent         String?
+  
+  createdAt         DateTime @default(now())
+
+  @@index([entity])
+  @@index([entityId])
+  @@index([userId])
+  @@index([createdAt])
+}

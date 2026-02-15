@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-white text-gray-800 antialiased;
+  }
+}
+
+@layer utilities {
+  .text-shadow-sm {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(147, 197, 114, 0.1);
+  }
+  
+  .pista-gradient {
+    background: linear-gradient(135deg, #F5FDF5 0%, #E8F9E8 50%, #C8EFC8 100%);
+  }
+}

@@ -1,0 +1,99 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import AdminNotifications from './AdminNotifications';
+
+interface AdminLayoutProps {
+  children: React.ReactNode;
+  onLogout: () => void;
+}
+
+export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
+  const pathname = usePathname();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const menuItems = [
+    { name: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
+    { name: 'Orders', path: '/admin/orders', icon: '🛒' },
+    { name: 'Services', path: '/admin/services', icon: '🧹' },
+    { name: 'Rooms', path: '/admin/rooms', icon: '🛏️' },
+    { name: 'Menu', path: '/admin/menu', icon: '🍽️' },
+    { name: 'Reports', path: '/admin/reports', icon: '📈' },
+    { name: 'Settings', path: '/admin/settings', icon: '⚙️' },
+  ];
+
+  return (
+    <div className="h-screen pista-gradient flex overflow-hidden">
+      {/* Admin Notifications */}
+      <AdminNotifications />
+      
+      {/* Sidebar */}
+      <aside
+        className={`${
+          sidebarOpen ? 'w-64' : 'w-20'
+        } glass-effect border-r-2 border-pista-300 transition-all duration-300 flex flex-col shadow-xl fixed left-0 top-0 bottom-0 z-10`}
+      >
+        {/* Logo */}
+        <div className="p-6 border-b-2 border-pista-200">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-pista-500 rounded-lg flex items-center justify-center shadow-md">
+              <span className="text-xl">🏨</span>
+            </div>
+            {sidebarOpen && (
+              <div>
+                <h1 className="text-lg font-bold text-pista-900">Grand Valley</h1>
+                <p className="text-xs text-pista-600">Admin Portal</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Menu Items */}
+        <nav className="flex-1 p-4 space-y-2">
+          {menuItems.map((item) => {
+            const isActive = pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                href={item.path}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                  isActive
+                    ? 'bg-pista-500 text-white shadow-md'
+                    : 'text-gray-700 hover:bg-pista-100'
+                }`}
+              >
+                <span className="text-xl">{item.icon}</span>
+                {sidebarOpen && <span className="font-medium">{item.name}</span>}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Toggle & Logout */}
+        <div className="p-4 border-t-2 border-pista-200 space-y-2">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-pista-100 transition"
+          >
+            <span className="text-xl">{sidebarOpen ? '◀' : '▶'}</span>
+            {sidebarOpen && <span className="font-medium">Collapse</span>}
+          </button>
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition"
+          >
+            <span className="text-xl">🚪</span>
+            {sidebarOpen && <span className="font-medium">Logout</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className={`flex-1 overflow-y-auto h-screen ${sidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300`}>
+        {children}
+      </main>
+    </div>
+  );
+}
