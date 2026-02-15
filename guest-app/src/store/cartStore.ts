@@ -10,6 +10,9 @@ interface CartItem {
   isVegetarian: boolean;
   preparationTime: number;
   image: string;
+  category: string;
+  rating: number;
+  ingredients: string[];
   quantity: number;
 }
 
