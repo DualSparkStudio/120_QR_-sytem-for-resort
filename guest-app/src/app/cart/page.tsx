@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { useCartStore } from '@/store/cartStore';
 import { useOrdersStore } from '@/store/ordersStore';
 
+export const dynamic = 'force-dynamic';
+
 declare global {
   interface Window {
     Razorpay: any;

@@ -5,6 +5,8 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import QRScanner from '@/components/QRScanner';
 
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   const searchParams = useSearchParams();
   const router = useRouter();

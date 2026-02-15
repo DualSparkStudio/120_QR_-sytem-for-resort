@@ -8,6 +8,8 @@ import { useNotificationStore } from '@/store/notificationStore';
 import { useCartStore } from '@/store/cartStore';
 import { useMenuStore } from '@/store/menuStore';
 
+export const dynamic = 'force-dynamic';
+
 export default function MenuPage() {
   const searchParams = useSearchParams();
   const roomId = searchParams.get('roomId');

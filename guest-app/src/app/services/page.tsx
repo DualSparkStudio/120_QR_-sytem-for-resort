@@ -7,6 +7,8 @@ import NotificationCenter from '@/components/NotificationCenter';
 import { useNotificationStore } from '@/store/notificationStore';
 import { useServicesStore } from '@/store/servicesStore';
 
+export const dynamic = 'force-dynamic';
+
 interface Service {
   id: string;
   name: string;
