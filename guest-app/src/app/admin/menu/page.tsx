@@ -82,23 +82,23 @@ export default function MenuManagementPage() {
   const filteredItems = filter === 'all' ? items : items.filter(item => item.category === filter);
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex justify-between items-center">
+    <div className="p-4 sm:p-6 pb-20 md:pb-6">
+      <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-pista-900 mb-2">Menu Management</h1>
-          <p className="text-gray-600">Manage menu items and availability</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-pista-900 mb-2">Menu Management</h1>
+          <p className="text-sm sm:text-base text-gray-600">Manage menu items and availability</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="bg-pista-500 hover:bg-pista-600 text-white font-bold px-6 py-3 rounded-lg transition shadow-lg flex items-center gap-2"
+          className="bg-pista-500 hover:bg-pista-600 text-white font-bold px-4 sm:px-6 py-3 rounded-lg transition shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto"
         >
           <span className="text-xl">+</span>
-          Create New Item
+          <span className="text-sm sm:text-base">Create New Item</span>
         </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <div className="glass-effect border-2 border-pista-200 rounded-xl p-4">
           <p className="text-xs text-gray-600 uppercase mb-1">Total Items</p>
           <p className="text-2xl font-bold text-pista-900">{items.length}</p>
@@ -136,86 +136,152 @@ export default function MenuManagementPage() {
 
       {/* Menu Items Table */}
       <div className="glass-effect border-2 border-pista-200 rounded-xl overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-pista-100 border-b-2 border-pista-200">
-            <tr>
-              <th className="text-left p-4 text-sm font-bold text-pista-900">Item Name</th>
-              <th className="text-left p-4 text-sm font-bold text-pista-900">Category</th>
-              <th className="text-left p-4 text-sm font-bold text-pista-900">Price</th>
-              <th className="text-left p-4 text-sm font-bold text-pista-900">Rating</th>
-              <th className="text-left p-4 text-sm font-bold text-pista-900">Type</th>
-              <th className="text-left p-4 text-sm font-bold text-pista-900">Status</th>
-              <th className="text-left p-4 text-sm font-bold text-pista-900">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredItems.map((item, index) => (
-              <tr key={item.id} className={`border-b border-pista-100 hover:bg-pista-50 transition ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                <td className="p-4">
-                  <p className="font-semibold text-gray-900">{item.name}</p>
-                  <p className="text-xs text-gray-500">{item.description.substring(0, 50)}...</p>
-                </td>
-                <td className="p-4">
-                  <span className="text-sm text-gray-600">{item.category}</span>
-                </td>
-                <td className="p-4">
-                  <span className="font-bold text-pista-700">₹{item.price}</span>
-                </td>
-                <td className="p-4">
+        {/* Desktop Table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-pista-100 border-b-2 border-pista-200">
+              <tr>
+                <th className="text-left p-4 text-sm font-bold text-pista-900">Item Name</th>
+                <th className="text-left p-4 text-sm font-bold text-pista-900">Category</th>
+                <th className="text-left p-4 text-sm font-bold text-pista-900">Price</th>
+                <th className="text-left p-4 text-sm font-bold text-pista-900">Rating</th>
+                <th className="text-left p-4 text-sm font-bold text-pista-900">Type</th>
+                <th className="text-left p-4 text-sm font-bold text-pista-900">Status</th>
+                <th className="text-left p-4 text-sm font-bold text-pista-900">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredItems.map((item, index) => (
+                <tr key={item.id} className={`border-b border-pista-100 hover:bg-pista-50 transition ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                  <td className="p-4">
+                    <p className="font-semibold text-gray-900">{item.name}</p>
+                    <p className="text-xs text-gray-500">{item.description.substring(0, 50)}...</p>
+                  </td>
+                  <td className="p-4">
+                    <span className="text-sm text-gray-600">{item.category}</span>
+                  </td>
+                  <td className="p-4">
+                    <span className="font-bold text-pista-700">₹{item.price}</span>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-1">
+                      <span className="text-yellow-500">★</span>
+                      <span className="font-semibold text-gray-900">{item.rating}</span>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
+                      item.isVegetarian ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                    }`}>
+                      {item.isVegetarian ? '🥬 Veg' : '🍖 Non-Veg'}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <span className={`text-xs px-3 py-1 rounded-full font-bold ${
+                      item.available 
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-red-100 text-red-700'
+                    }`}>
+                      {item.available ? 'Available' : 'Unavailable'}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleViewItem(item)}
+                        className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-lg transition"
+                        title="View"
+                      >
+                        👁️
+                      </button>
+                      <button
+                        onClick={() => handleEditItem(item)}
+                        className="p-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-lg transition"
+                        title="Edit"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => toggleAvailability(item.id)}
+                        className={`p-2 rounded-lg text-lg transition ${
+                          item.available
+                            ? 'bg-red-500 hover:bg-red-600 text-white'
+                            : 'bg-green-500 hover:bg-green-600 text-white'
+                        }`}
+                        title={item.available ? 'Disable' : 'Enable'}
+                      >
+                        {item.available ? '🚫' : '✅'}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="md:hidden divide-y divide-pista-100">
+          {filteredItems.map((item) => (
+            <div key={item.id} className="p-4 hover:bg-pista-50 transition">
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex-1">
+                  <h3 className="font-bold text-gray-900 mb-1">{item.name}</h3>
+                  <p className="text-xs text-gray-500 mb-2">{item.description.substring(0, 60)}...</p>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    <span className="text-xs px-2 py-1 bg-pista-100 text-pista-700 rounded-full">{item.category}</span>
+                    <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
+                      item.isVegetarian ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                    }`}>
+                      {item.isVegetarian ? '🥬 Veg' : '🍖 Non-Veg'}
+                    </span>
+                    <span className={`text-xs px-2 py-1 rounded-full font-bold ${
+                      item.available ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                    }`}>
+                      {item.available ? 'Available' : 'Unavailable'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
+                  <span className="font-bold text-pista-700 text-lg">₹{item.price}</span>
                   <div className="flex items-center gap-1">
                     <span className="text-yellow-500">★</span>
-                    <span className="font-semibold text-gray-900">{item.rating}</span>
+                    <span className="font-semibold text-gray-900 text-sm">{item.rating}</span>
                   </div>
-                </td>
-                <td className="p-4">
-                  <span className={`text-xs px-2 py-1 rounded-full font-semibold ${
-                    item.isVegetarian ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                  }`}>
-                    {item.isVegetarian ? '🥬 Veg' : '🍖 Non-Veg'}
-                  </span>
-                </td>
-                <td className="p-4">
-                  <span className={`text-xs px-3 py-1 rounded-full font-bold ${
-                    item.available 
-                      ? 'bg-green-100 text-green-700' 
-                      : 'bg-red-100 text-red-700'
-                  }`}>
-                    {item.available ? 'Available' : 'Unavailable'}
-                  </span>
-                </td>
-                <td className="p-4">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleViewItem(item)}
-                      className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-lg transition"
-                      title="View"
-                    >
-                      👁️
-                    </button>
-                    <button
-                      onClick={() => handleEditItem(item)}
-                      className="p-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-lg transition"
-                      title="Edit"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      onClick={() => toggleAvailability(item.id)}
-                      className={`p-2 rounded-lg text-lg transition ${
-                        item.available
-                          ? 'bg-red-500 hover:bg-red-600 text-white'
-                          : 'bg-green-500 hover:bg-green-600 text-white'
-                      }`}
-                      title={item.available ? 'Disable' : 'Enable'}
-                    >
-                      {item.available ? '🚫' : '✅'}
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleViewItem(item)}
+                    className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-base transition"
+                    title="View"
+                  >
+                    👁️
+                  </button>
+                  <button
+                    onClick={() => handleEditItem(item)}
+                    className="p-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-base transition"
+                    title="Edit"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    onClick={() => toggleAvailability(item.id)}
+                    className={`p-2 rounded-lg text-base transition ${
+                      item.available
+                        ? 'bg-red-500 hover:bg-red-600 text-white'
+                        : 'bg-green-500 hover:bg-green-600 text-white'
+                    }`}
+                    title={item.available ? 'Disable' : 'Enable'}
+                  >
+                    {item.available ? '🚫' : '✅'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {filteredItems.length === 0 && (

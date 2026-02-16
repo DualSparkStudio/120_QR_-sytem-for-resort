@@ -67,43 +67,47 @@ export default function MenuPage() {
     <div className="min-h-screen pista-gradient">
       {/* Header */}
       <header className="glass-effect border-b border-pista-200 sticky top-0 z-40 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-pista-900 tracking-tight">Menu</h1>
-            <p className="text-pista-600 text-xs uppercase tracking-wider">Room {roomId}</p>
-          </div>
-          <div className="flex gap-3">
-            <NotificationCenter />
-            <Link
-              href={`/cart?roomId=${roomId}`}
-              className="relative bg-pista-500 hover:bg-pista-600 text-white px-5 py-2 rounded-lg font-bold transition text-sm shadow-md"
-            >
-              🛒 Cart
-              {cart.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
-                  {cart.length}
-                </span>
-              )}
-            </Link>
-            <Link href={`/services?roomId=${roomId}`} className="bg-white hover:bg-gray-50 text-pista-700 px-5 py-2 rounded-lg transition border border-pista-200 font-medium text-sm shadow-sm">
-              🧹 Services
-            </Link>
-            <Link href="/" className="bg-white hover:bg-gray-50 text-pista-700 px-5 py-2 rounded-lg transition border border-pista-200 font-medium text-sm shadow-sm">
-              ← Back
-            </Link>
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div className="flex justify-between items-center gap-2">
+            <div className="flex-shrink-0">
+              <h1 className="text-2xl sm:text-3xl font-bold text-pista-900 tracking-tight">Menu</h1>
+              <p className="text-pista-600 text-xs uppercase tracking-wider">Room {roomId}</p>
+            </div>
+            <div className="flex gap-2 sm:gap-3 flex-wrap justify-end">
+              <NotificationCenter />
+              <Link
+                href={`/cart?roomId=${roomId}`}
+                className="relative bg-pista-500 hover:bg-pista-600 text-white px-3 sm:px-5 py-2 rounded-lg font-bold transition text-xs sm:text-sm shadow-md whitespace-nowrap"
+              >
+                <span className="hidden sm:inline">🛒 Cart</span>
+                <span className="sm:hidden">🛒</span>
+                {cart.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">
+                    {cart.length}
+                  </span>
+                )}
+              </Link>
+              <Link href={`/services?roomId=${roomId}`} className="hidden sm:flex bg-white hover:bg-gray-50 text-pista-700 px-5 py-2 rounded-lg transition border border-pista-200 font-medium text-sm shadow-sm whitespace-nowrap">
+                🧹 Services
+              </Link>
+              <Link href="/" className="bg-white hover:bg-gray-50 text-pista-700 px-3 sm:px-5 py-2 rounded-lg transition border border-pista-200 font-medium text-xs sm:text-sm shadow-sm whitespace-nowrap">
+                <span className="hidden sm:inline">← Back</span>
+                <span className="sm:hidden">←</span>
+              </Link>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
         <div className="w-full">
           {/* Main Content */}
           <div>
             {/* Category Tabs */}
-            <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+            <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
               <button
                 onClick={() => setActiveTab('all')}
-                className={`px-5 py-2 rounded-lg font-semibold whitespace-nowrap transition text-sm ${
+                className={`px-4 sm:px-5 py-2 rounded-lg font-semibold whitespace-nowrap transition text-xs sm:text-sm ${
                   activeTab === 'all'
                     ? 'bg-pista-500 text-white shadow-md'
                     : 'bg-white text-pista-700 hover:bg-pista-50 border border-pista-200'
@@ -115,7 +119,7 @@ export default function MenuPage() {
                 <button
                   key={category}
                   onClick={() => setActiveTab(category)}
-                  className={`px-5 py-2 rounded-lg font-semibold whitespace-nowrap transition text-sm ${
+                  className={`px-4 sm:px-5 py-2 rounded-lg font-semibold whitespace-nowrap transition text-xs sm:text-sm ${
                     activeTab === category
                       ? 'bg-pista-500 text-white shadow-md'
                       : 'bg-white text-pista-700 hover:bg-pista-50 border border-pista-200'
@@ -127,7 +131,7 @@ export default function MenuPage() {
             </div>
 
             {/* Menu Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {filteredItems.map((item) => (
                 <div
                   key={item.id}

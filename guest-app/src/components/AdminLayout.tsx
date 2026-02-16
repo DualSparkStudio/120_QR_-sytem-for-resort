@@ -33,7 +33,7 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
       <aside
         className={`${
           sidebarOpen ? 'w-64' : 'w-20'
-        } glass-effect border-r-2 border-pista-300 transition-all duration-300 flex flex-col shadow-xl fixed left-0 top-0 bottom-0 z-10`}
+        } glass-effect border-r-2 border-pista-300 transition-all duration-300 flex flex-col shadow-xl fixed left-0 top-0 bottom-0 z-10 hidden md:flex`}
       >
         {/* Logo */}
         <div className="p-6 border-b-2 border-pista-200">
@@ -91,8 +91,50 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className={`flex-1 overflow-y-auto h-screen ${sidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300`}>
+      <main className={`flex-1 overflow-y-auto h-screen ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'} transition-all duration-300`}>
+        {/* Mobile Header */}
+        <div className="md:hidden sticky top-0 z-20 glass-effect border-b-2 border-pista-300 p-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-pista-500 rounded-lg flex items-center justify-center shadow-md">
+              <span className="text-xl">🏨</span>
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-pista-900">Grand Valley</h1>
+              <p className="text-xs text-pista-600">Admin Portal</p>
+            </div>
+          </div>
+          <button
+            onClick={onLogout}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-red-600 hover:bg-red-50 transition"
+          >
+            <span className="text-xl">🚪</span>
+          </button>
+        </div>
+        
         {children}
+        
+        {/* Mobile Bottom Navigation */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-effect border-t-2 border-pista-300 p-2 z-20">
+          <div className="grid grid-cols-4 gap-1">
+            {menuItems.slice(0, 4).map((item) => {
+              const isActive = pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+                    isActive
+                      ? 'bg-pista-500 text-white shadow-md'
+                      : 'text-gray-700 hover:bg-pista-100'
+                  }`}
+                >
+                  <span className="text-lg">{item.icon}</span>
+                  <span className="text-xs font-medium">{item.name}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
       </main>
     </div>
   );
