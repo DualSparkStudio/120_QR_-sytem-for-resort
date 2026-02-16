@@ -115,24 +115,62 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
         
         {/* Mobile Bottom Navigation */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-effect border-t-2 border-pista-300 p-2 z-20">
-          <div className="grid grid-cols-4 gap-1">
-            {menuItems.slice(0, 4).map((item) => {
-              const isActive = pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  href={item.path}
-                  className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
-                    isActive
-                      ? 'bg-pista-500 text-white shadow-md'
-                      : 'text-gray-700 hover:bg-pista-100'
-                  }`}
-                >
-                  <span className="text-lg">{item.icon}</span>
-                  <span className="text-xs font-medium">{item.name}</span>
-                </Link>
-              );
-            })}
+          <div className="grid grid-cols-5 gap-1">
+            <Link
+              href="/admin/dashboard"
+              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+                pathname === '/admin/dashboard'
+                  ? 'bg-pista-500 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-pista-100'
+              }`}
+            >
+              <span className="text-lg">📊</span>
+              <span className="text-xs font-medium">Dashboard</span>
+            </Link>
+            <Link
+              href="/admin/orders"
+              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+                pathname === '/admin/orders'
+                  ? 'bg-pista-500 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-pista-100'
+              }`}
+            >
+              <span className="text-lg">🛒</span>
+              <span className="text-xs font-medium">Orders</span>
+            </Link>
+            <Link
+              href="/admin/menu"
+              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+                pathname === '/admin/menu'
+                  ? 'bg-pista-500 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-pista-100'
+              }`}
+            >
+              <span className="text-lg">🍽️</span>
+              <span className="text-xs font-medium">Menu</span>
+            </Link>
+            <Link
+              href="/admin/reports"
+              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+                pathname === '/admin/reports'
+                  ? 'bg-pista-500 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-pista-100'
+              }`}
+            >
+              <span className="text-lg">📈</span>
+              <span className="text-xs font-medium">Reports</span>
+            </Link>
+            <Link
+              href="/admin/settings"
+              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+                pathname === '/admin/settings'
+                  ? 'bg-pista-500 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-pista-100'
+              }`}
+            >
+              <span className="text-lg">⚙️</span>
+              <span className="text-xs font-medium">Settings</span>
+            </Link>
           </div>
         </nav>
       </main>

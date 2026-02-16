@@ -124,50 +124,53 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen pista-gradient">
+    <div className="min-h-screen pista-gradient pb-20 md:pb-0">
       {/* Header */}
       <header className="glass-effect border-b border-pista-200 sticky top-0 z-40 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-5 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-pista-900">Your Cart</h1>
-            <p className="text-pista-600 text-sm">Room {roomId}</p>
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-5">
+          <div className="flex justify-between items-center gap-2">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-pista-900">Your Cart</h1>
+              <p className="text-pista-600 text-xs sm:text-sm">Room {roomId}</p>
+            </div>
+            <Link
+              href={`/menu?roomId=${roomId}`}
+              className="bg-white hover:bg-gray-50 text-pista-700 px-3 sm:px-5 py-2 rounded-lg transition border border-pista-200 font-medium text-xs sm:text-sm shadow-sm whitespace-nowrap"
+            >
+              <span className="hidden sm:inline">← Back to Menu</span>
+              <span className="sm:hidden">← Menu</span>
+            </Link>
           </div>
-          <Link
-            href={`/menu?roomId=${roomId}`}
-            className="bg-white hover:bg-gray-50 text-pista-700 px-5 py-2 rounded-lg transition border border-pista-200 font-medium text-sm shadow-sm"
-          >
-            ← Back to Menu
-          </Link>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {cart.length === 0 ? (
-          <div className="glass-effect border-2 border-pista-200 rounded-2xl p-16 text-center">
-            <span className="text-8xl block mb-6">🛒</span>
-            <h2 className="text-3xl font-bold text-pista-900 mb-4">Your cart is empty</h2>
-            <p className="text-gray-600 mb-8">Add some delicious items from our menu</p>
+          <div className="glass-effect border-2 border-pista-200 rounded-2xl p-8 sm:p-16 text-center">
+            <span className="text-6xl sm:text-8xl block mb-4 sm:mb-6">🛒</span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-pista-900 mb-3 sm:mb-4">Your cart is empty</h2>
+            <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">Add some delicious items from our menu</p>
             <Link
               href={`/menu?roomId=${roomId}`}
-              className="inline-block bg-pista-500 hover:bg-pista-600 text-white font-bold py-3 px-8 rounded-lg transition transform hover:scale-105 shadow-lg"
+              className="inline-block bg-pista-500 hover:bg-pista-600 text-white font-bold py-3 px-6 sm:px-8 rounded-lg transition transform hover:scale-105 shadow-lg text-sm sm:text-base"
             >
               Browse Menu
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
             {/* Cart Items */}
-            <div className="lg:col-span-2 space-y-4">
-              <h2 className="text-2xl font-bold text-pista-900 mb-6">Order Items ({cart.length})</h2>
+            <div className="lg:col-span-2 space-y-3 sm:space-y-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-pista-900 mb-4 sm:mb-6">Order Items ({cart.length})</h2>
               
               {cart.map((item) => (
                 <div
                   key={item.id}
-                  className="glass-effect border-2 border-pista-200 rounded-xl p-6 hover:shadow-lg transition"
+                  className="glass-effect border-2 border-pista-200 rounded-xl p-4 sm:p-6 hover:shadow-lg transition"
                 >
-                  <div className="flex gap-6">
+                  <div className="flex gap-3 sm:gap-6">
                     {/* Item Image */}
-                    <div className="relative w-32 h-32 rounded-lg overflow-hidden flex-shrink-0 bg-pista-100">
+                    <div className="relative w-20 h-20 sm:w-32 sm:h-32 rounded-lg overflow-hidden flex-shrink-0 bg-pista-100">
                       <img
                         src={item.image}
                         alt={item.name}
@@ -178,47 +181,45 @@ export default function CartPage() {
                         }}
                       />
                       {item.isVegetarian && (
-                        <span className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-semibold">
+                        <span className="absolute top-1 right-1 sm:top-2 sm:right-2 bg-green-500 text-white text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full font-semibold">
                           🥬
                         </span>
                       )}
                     </div>
 
                     {/* Item Details */}
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h3 className="font-bold text-pista-900 text-xl">{item.name}</h3>
-                          <p className="text-pista-600 text-sm">{item.description}</p>
+                        <div className="flex-1 min-w-0 pr-2">
+                          <h3 className="font-bold text-pista-900 text-base sm:text-xl truncate">{item.name}</h3>
+                          <p className="text-pista-600 text-xs sm:text-sm line-clamp-1">{item.description}</p>
                         </div>
                         <button
                           onClick={() => removeFromCart(item.id)}
-                          className="text-red-500 hover:text-red-600 transition text-xl"
+                          className="text-red-500 hover:text-red-600 transition text-lg sm:text-xl flex-shrink-0"
                         >
                           ✕
                         </button>
                       </div>
 
-                      <p className="text-gray-600 text-sm mb-4">{item.details}</p>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-3">
+                        <div className="flex items-center gap-2 sm:gap-3">
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="bg-pista-100 hover:bg-pista-200 w-8 h-8 rounded-lg text-pista-700 transition font-bold border border-pista-300"
+                            className="bg-pista-100 hover:bg-pista-200 w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-pista-700 transition font-bold border border-pista-300 text-sm sm:text-base"
                           >
                             −
                           </button>
-                          <span className="w-8 text-center font-bold text-pista-900 text-lg">{item.quantity}</span>
+                          <span className="w-6 sm:w-8 text-center font-bold text-pista-900 text-base sm:text-lg">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="bg-pista-100 hover:bg-pista-200 w-8 h-8 rounded-lg text-pista-700 transition font-bold border border-pista-300"
+                            className="bg-pista-100 hover:bg-pista-200 w-7 h-7 sm:w-8 sm:h-8 rounded-lg text-pista-700 transition font-bold border border-pista-300 text-sm sm:text-base"
                           >
                             +
                           </button>
                         </div>
-                        <div className="text-right">
-                          <p className="text-2xl font-bold text-pista-900">₹{item.basePrice * item.quantity}</p>
+                        <div className="text-left sm:text-right">
+                          <p className="text-xl sm:text-2xl font-bold text-pista-900">₹{item.basePrice * item.quantity}</p>
                           <p className="text-xs text-gray-500">₹{item.basePrice} each</p>
                         </div>
                       </div>
@@ -230,7 +231,7 @@ export default function CartPage() {
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <div className="glass-effect border-2 border-pista-300 rounded-2xl p-6 sticky top-24 shadow-xl">
+              <div className="glass-effect border-2 border-pista-300 rounded-2xl p-4 sm:p-6 lg:sticky lg:top-24 shadow-xl">
                 <h2 className="text-2xl font-bold text-pista-900 mb-6">Order Summary</h2>
 
                 <div className="space-y-4 mb-6">
