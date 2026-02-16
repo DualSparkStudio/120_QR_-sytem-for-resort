@@ -91,7 +91,7 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className={`flex-1 overflow-y-auto h-screen ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'} transition-all duration-300`}>
+      <main className={`flex-1 overflow-y-auto h-screen ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'} transition-all duration-300 relative z-10`}>
         {/* Mobile Header */}
         <div className="md:hidden sticky top-0 z-20 glass-effect border-b-2 border-pista-300 p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -111,65 +111,67 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
           </button>
         </div>
         
-        {children}
+        <div className="relative z-0">
+          {children}
+        </div>
         
         {/* Mobile Bottom Navigation */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-effect border-t-2 border-pista-300 p-2 z-20">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-effect border-t-2 border-pista-300 p-2 z-30 shadow-lg">
           <div className="grid grid-cols-5 gap-1">
             <Link
               href="/admin/dashboard"
-              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+              className={`flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg transition-all ${
                 pathname === '/admin/dashboard'
                   ? 'bg-pista-500 text-white shadow-md'
                   : 'text-gray-700 hover:bg-pista-100'
               }`}
             >
-              <span className="text-lg">📊</span>
-              <span className="text-xs font-medium">Dashboard</span>
+              <span className="text-base">📊</span>
+              <span className="text-[10px] font-medium leading-tight">Dashboard</span>
             </Link>
             <Link
               href="/admin/orders"
-              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+              className={`flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg transition-all ${
                 pathname === '/admin/orders'
                   ? 'bg-pista-500 text-white shadow-md'
                   : 'text-gray-700 hover:bg-pista-100'
               }`}
             >
-              <span className="text-lg">🛒</span>
-              <span className="text-xs font-medium">Orders</span>
+              <span className="text-base">🛒</span>
+              <span className="text-[10px] font-medium leading-tight">Orders</span>
+            </Link>
+            <Link
+              href="/admin/rooms"
+              className={`flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg transition-all ${
+                pathname === '/admin/rooms'
+                  ? 'bg-pista-500 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-pista-100'
+              }`}
+            >
+              <span className="text-base">🛏️</span>
+              <span className="text-[10px] font-medium leading-tight">Rooms</span>
             </Link>
             <Link
               href="/admin/menu"
-              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+              className={`flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg transition-all ${
                 pathname === '/admin/menu'
                   ? 'bg-pista-500 text-white shadow-md'
                   : 'text-gray-700 hover:bg-pista-100'
               }`}
             >
-              <span className="text-lg">🍽️</span>
-              <span className="text-xs font-medium">Menu</span>
+              <span className="text-base">🍽️</span>
+              <span className="text-[10px] font-medium leading-tight">Menu</span>
             </Link>
             <Link
               href="/admin/reports"
-              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+              className={`flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg transition-all ${
                 pathname === '/admin/reports'
                   ? 'bg-pista-500 text-white shadow-md'
                   : 'text-gray-700 hover:bg-pista-100'
               }`}
             >
-              <span className="text-lg">📈</span>
-              <span className="text-xs font-medium">Reports</span>
-            </Link>
-            <Link
-              href="/admin/settings"
-              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
-                pathname === '/admin/settings'
-                  ? 'bg-pista-500 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-pista-100'
-              }`}
-            >
-              <span className="text-lg">⚙️</span>
-              <span className="text-xs font-medium">Settings</span>
+              <span className="text-base">📈</span>
+              <span className="text-[10px] font-medium leading-tight">Reports</span>
             </Link>
           </div>
         </nav>

@@ -20,7 +20,7 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6 pb-20 md:pb-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-pista-900 mb-2">Orders Management</h1>
         <p className="text-gray-600">Track and manage all room service orders</p>

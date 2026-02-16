@@ -278,23 +278,23 @@ export default function RoomsPage() {
     : '';
 
   return (
-    <div className="p-6">
-      <div className="mb-6 flex justify-between items-center">
+    <div className="p-4 sm:p-6 pb-20 md:pb-6">
+      <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-pista-900 mb-2">Rooms Management</h1>
-          <p className="text-gray-600">Manage rooms and generate QR codes</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-pista-900 mb-2">Rooms Management</h1>
+          <p className="text-sm sm:text-base text-gray-600">Manage rooms and generate QR codes</p>
         </div>
         <button
           onClick={handleDownloadAllQRs}
-          className="bg-pista-500 hover:bg-pista-600 text-white font-bold px-6 py-3 rounded-lg transition shadow-lg flex items-center gap-2"
+          className="bg-pista-500 hover:bg-pista-600 text-white font-bold px-4 sm:px-6 py-3 rounded-lg transition shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto text-sm sm:text-base"
         >
-          <span className="text-xl">📥</span>
-          Download All QR Codes
+          <span className="text-lg sm:text-xl">📥</span>
+          <span className="whitespace-nowrap">Download All QR Codes</span>
         </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
         <div className="glass-effect border-2 border-pista-200 rounded-xl p-4">
           <p className="text-xs text-gray-600 uppercase mb-1">Total Rooms</p>
           <p className="text-2xl font-bold text-pista-900">{rooms.length}</p>
@@ -336,7 +336,7 @@ export default function RoomsPage() {
       </div>
 
       {/* Rooms Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
         {filteredRooms.map((room) => (
           <div key={room.id} className="glass-effect border-2 border-pista-200 rounded-xl p-5 hover:shadow-xl transition">
             <div className="flex justify-between items-start mb-3">
