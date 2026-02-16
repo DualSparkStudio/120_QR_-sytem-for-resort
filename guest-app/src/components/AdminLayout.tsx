@@ -116,11 +116,11 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
         </div>
         
         {/* Mobile Bottom Navigation */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-effect border-t-2 border-pista-300 p-2 z-30 shadow-lg">
-          <div className="grid grid-cols-5 gap-1">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 glass-effect border-t-2 border-pista-300 z-30 shadow-lg">
+          <div className="flex overflow-x-auto scrollbar-hide px-2 py-2 gap-1">
             <Link
               href="/admin/dashboard"
-              className={`flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg transition-all ${
+              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all flex-shrink-0 min-w-[70px] ${
                 pathname === '/admin/dashboard'
                   ? 'bg-pista-500 text-white shadow-md'
                   : 'text-gray-700 hover:bg-pista-100'
@@ -131,7 +131,7 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
             </Link>
             <Link
               href="/admin/orders"
-              className={`flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg transition-all ${
+              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all flex-shrink-0 min-w-[70px] ${
                 pathname === '/admin/orders'
                   ? 'bg-pista-500 text-white shadow-md'
                   : 'text-gray-700 hover:bg-pista-100'
@@ -141,8 +141,19 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
               <span className="text-[10px] font-medium leading-tight">Orders</span>
             </Link>
             <Link
+              href="/admin/services"
+              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all flex-shrink-0 min-w-[70px] ${
+                pathname === '/admin/services'
+                  ? 'bg-pista-500 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-pista-100'
+              }`}
+            >
+              <span className="text-base">🧹</span>
+              <span className="text-[10px] font-medium leading-tight">Services</span>
+            </Link>
+            <Link
               href="/admin/rooms"
-              className={`flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg transition-all ${
+              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all flex-shrink-0 min-w-[70px] ${
                 pathname === '/admin/rooms'
                   ? 'bg-pista-500 text-white shadow-md'
                   : 'text-gray-700 hover:bg-pista-100'
@@ -153,7 +164,7 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
             </Link>
             <Link
               href="/admin/menu"
-              className={`flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg transition-all ${
+              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all flex-shrink-0 min-w-[70px] ${
                 pathname === '/admin/menu'
                   ? 'bg-pista-500 text-white shadow-md'
                   : 'text-gray-700 hover:bg-pista-100'
@@ -164,7 +175,7 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
             </Link>
             <Link
               href="/admin/reports"
-              className={`flex flex-col items-center gap-0.5 px-1 py-2 rounded-lg transition-all ${
+              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all flex-shrink-0 min-w-[70px] ${
                 pathname === '/admin/reports'
                   ? 'bg-pista-500 text-white shadow-md'
                   : 'text-gray-700 hover:bg-pista-100'
@@ -173,6 +184,21 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
               <span className="text-base">📈</span>
               <span className="text-[10px] font-medium leading-tight">Reports</span>
             </Link>
+            <Link
+              href="/admin/settings"
+              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all flex-shrink-0 min-w-[70px] ${
+                pathname === '/admin/settings'
+                  ? 'bg-pista-500 text-white shadow-md'
+                  : 'text-gray-700 hover:bg-pista-100'
+              }`}
+            >
+              <span className="text-base">⚙️</span>
+              <span className="text-[10px] font-medium leading-tight">Settings</span>
+            </Link>
+          </div>
+          {/* Scroll Indicator */}
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+            <div className="bg-gradient-to-l from-white/90 to-transparent w-8 h-full"></div>
           </div>
         </nav>
       </main>
