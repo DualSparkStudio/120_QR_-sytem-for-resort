@@ -29,15 +29,15 @@ export default function CartPage() {
   const total = subtotal + tax + deliveryFee;
 
   useEffect(() => {
-    // Load Razorpay script
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
+    // Load Razorpay script - DISABLED
+    // const script = document.createElement('script');
+    // script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    // script.async = true;
+    // document.body.appendChild(script);
 
-    return () => {
-      document.body.removeChild(script);
-    };
+    // return () => {
+    //   document.body.removeChild(script);
+    // };
   }, []);
 
   const handlePayment = async () => {
@@ -45,77 +45,36 @@ export default function CartPage() {
 
     setIsProcessing(true);
 
-    // Get Razorpay key from environment
-    const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-    
-    if (!razorpayKey) {
-      console.error('Razorpay key not found in environment variables');
-      alert('Payment configuration error. Please contact support.');
-      setIsProcessing(false);
-      return;
-    }
-
-    // Razorpay configuration from environment variables
-    const options = {
-      key: razorpayKey,
-      amount: total * 100, // Amount in paise
-      currency: 'INR',
-      name: 'Grand Valley Resort',
-      description: `Room ${roomId} - Food Order`,
-      image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=200&h=200&fit=crop',
-      handler: function (response: any) {
-        // Payment successful
-        console.log('Payment successful:', response);
-        
-        // Add order to store
-        addOrder({
-          roomId: roomId || 'Unknown',
-          items: cart.map(item => ({
-            id: item.id,
-            name: item.name,
-            price: item.basePrice,
-            quantity: item.quantity,
-            image: item.image,
-          })),
-          subtotal,
-          tax,
-          deliveryFee,
-          total,
-        });
-        
-        setOrderPlaced(true);
-        clearCart();
-        
-        setTimeout(() => {
-          router.push(`/menu?roomId=${roomId}`);
-        }, 3000);
-      },
-      prefill: {
-        name: 'Guest',
-        email: 'guest@resort.com',
-        contact: '9999999999',
-      },
-      notes: {
-        room_id: roomId,
-        order_type: 'food',
-      },
-      theme: {
-        color: '#93C572',
-      },
-      modal: {
-        ondismiss: function () {
-          setIsProcessing(false);
-        },
-      },
-    };
-
+    // Place order without payment
     try {
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
+      console.log('Order placed without payment');
+      
+      // Add order to local store
+      addOrder({
+        roomId: roomId || 'Unknown',
+        items: cart.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.basePrice,
+          quantity: item.quantity,
+          image: item.image,
+        })),
+        subtotal,
+        tax,
+        deliveryFee,
+        total,
+      });
+      
+      setOrderPlaced(true);
+      clearCart();
+      
+      setTimeout(() => {
+        router.push(`/orders?roomId=${roomId}`);
+      }, 2000);
     } catch (error) {
-      console.error('Payment error:', error);
+      console.error('Order placement error:', error);
       setIsProcessing(false);
-      alert('Payment initialization failed. Please try again.');
+      alert('Failed to place order. Please try again.');
     }
   };
 
@@ -282,13 +241,13 @@ export default function CartPage() {
                     </span>
                   ) : (
                     <span className="flex items-center justify-center gap-2">
-                      <span>💳</span> Proceed to Payment
+                      <span>✓</span> Place Order
                     </span>
                   )}
                 </button>
 
                 <p className="text-xs text-gray-500 text-center mt-4">
-                  Secure payment powered by Razorpay
+                  Pay later from Orders page
                 </p>
               </div>
             </div>

@@ -17,15 +17,19 @@ export interface Order {
   deliveryFee: number;
   total: number;
   status: 'pending' | 'preparing' | 'ready' | 'delivered';
+  paymentStatus: 'unpaid' | 'paid';
   timestamp: Date;
   notes?: string;
 }
 
 interface OrdersStore {
   orders: Order[];
-  addOrder: (order: Omit<Order, 'id' | 'timestamp' | 'status'>) => string;
+  addOrder: (order: Omit<Order, 'id' | 'timestamp' | 'status' | 'paymentStatus'>) => string;
   updateOrderStatus: (id: string, status: Order['status']) => void;
+  markOrdersAsPaid: (orderIds: string[]) => void;
   getOrdersByRoom: (roomId: string) => Order[];
+  getUnpaidOrdersByRoom: (roomId: string) => Order[];
+  getPaidOrdersByRoom: (roomId: string) => Order[];
   getPendingOrders: () => Order[];
 }
 
@@ -40,6 +44,7 @@ export const useOrdersStore = create<OrdersStore>()(
           id: `ORD-${Date.now()}`,
           timestamp: new Date(),
           status: 'pending',
+          paymentStatus: 'unpaid',
         };
         
         set((state) => ({ 
@@ -57,8 +62,24 @@ export const useOrdersStore = create<OrdersStore>()(
         }));
       },
       
+      markOrdersAsPaid: (orderIds) => {
+        set((state) => ({
+          orders: state.orders.map((order) =>
+            orderIds.includes(order.id) ? { ...order, paymentStatus: 'paid' } : order
+          ),
+        }));
+      },
+      
       getOrdersByRoom: (roomId) => {
         return get().orders.filter((order) => order.roomId === roomId);
+      },
+      
+      getUnpaidOrdersByRoom: (roomId) => {
+        return get().orders.filter((order) => order.roomId === roomId && order.paymentStatus === 'unpaid');
+      },
+      
+      getPaidOrdersByRoom: (roomId) => {
+        return get().orders.filter((order) => order.roomId === roomId && order.paymentStatus === 'paid');
       },
       
       getPendingOrders: () => {

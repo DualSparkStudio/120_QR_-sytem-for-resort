@@ -1,13 +1,48 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useOrdersStore, Order } from '@/store/ordersStore';
 
 export default function OrdersPage() {
   const { orders, updateOrderStatus } = useOrdersStore();
   const [filter, setFilter] = useState<'all' | Order['status']>('all');
+  const [paymentFilter, setPaymentFilter] = useState<'all' | 'paid' | 'unpaid'>('all');
 
-  const filteredOrders = filter === 'all' ? orders : orders.filter(o => o.status === filter);
+  const filteredOrders = useMemo(() => {
+    // Ensure all orders have paymentStatus field (migration for old data)
+    const ordersWithPaymentStatus = orders.map(o => ({
+      ...o,
+      paymentStatus: o.paymentStatus || 'unpaid' // Default to unpaid if not set
+    }));
+    
+    let filtered = filter === 'all' ? ordersWithPaymentStatus : ordersWithPaymentStatus.filter(o => o.status === filter);
+    
+    if (paymentFilter === 'paid') {
+      filtered = filtered.filter(o => o.paymentStatus === 'paid');
+    } else if (paymentFilter === 'unpaid') {
+      filtered = filtered.filter(o => o.paymentStatus === 'unpaid');
+    }
+    
+    return filtered;
+  }, [orders, filter, paymentFilter]);
+
+  // Group orders by room
+  const ordersByRoom = useMemo(() => {
+    const grouped = new Map<string, Order[]>();
+    
+    filteredOrders.forEach(order => {
+      const roomOrders = grouped.get(order.roomId) || [];
+      roomOrders.push(order);
+      grouped.set(order.roomId, roomOrders);
+    });
+    
+    // Sort rooms by room number
+    return Array.from(grouped.entries()).sort((a, b) => {
+      const roomA = parseInt(a[0]) || 0;
+      const roomB = parseInt(b[0]) || 0;
+      return roomA - roomB;
+    });
+  }, [filteredOrders]);
 
   const getStatusColor = (status: Order['status']) => {
     switch (status) {
@@ -19,6 +54,12 @@ export default function OrdersPage() {
     }
   };
 
+  const paidOrders = orders.filter(o => (o.paymentStatus || 'unpaid') === 'paid');
+  const unpaidOrders = orders.filter(o => (o.paymentStatus || 'unpaid') === 'unpaid');
+  const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+  const paidRevenue = paidOrders.reduce((sum, o) => sum + o.total, 0);
+  const unpaidRevenue = unpaidOrders.reduce((sum, o) => sum + o.total, 0);
+
   return (
     <div className="p-4 sm:p-6 pb-20 md:pb-6">
       <div className="mb-6">
@@ -27,14 +68,24 @@ export default function OrdersPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
+        <div className="glass-effect border-2 border-pista-300 rounded-xl p-4 bg-gradient-to-br from-pista-50 to-green-50">
+          <p className="text-xs text-gray-600 uppercase mb-1">Total Revenue</p>
+          <p className="text-2xl font-bold text-pista-700">₹{totalRevenue}</p>
+        </div>
         <div className="glass-effect border-2 border-pista-200 rounded-xl p-4">
           <p className="text-xs text-gray-600 uppercase mb-1">Total Orders</p>
           <p className="text-2xl font-bold text-pista-900">{orders.length}</p>
         </div>
-        <div className="glass-effect border-2 border-yellow-200 rounded-xl p-4">
-          <p className="text-xs text-gray-600 uppercase mb-1">Pending</p>
-          <p className="text-2xl font-bold text-yellow-700">{orders.filter(o => o.status === 'pending').length}</p>
+        <div className="glass-effect border-2 border-green-200 rounded-xl p-4 bg-green-50">
+          <p className="text-xs text-gray-600 uppercase mb-1">Paid</p>
+          <p className="text-xl font-bold text-green-700">₹{paidRevenue}</p>
+          <p className="text-xs text-gray-500">{paidOrders.length} orders</p>
+        </div>
+        <div className="glass-effect border-2 border-red-200 rounded-xl p-4 bg-red-50">
+          <p className="text-xs text-gray-600 uppercase mb-1">Unpaid</p>
+          <p className="text-xl font-bold text-red-700">₹{unpaidRevenue}</p>
+          <p className="text-xs text-gray-500">{unpaidOrders.length} orders</p>
         </div>
         <div className="glass-effect border-2 border-blue-200 rounded-xl p-4">
           <p className="text-xs text-gray-600 uppercase mb-1">Preparing</p>
@@ -44,13 +95,43 @@ export default function OrdersPage() {
           <p className="text-xs text-gray-600 uppercase mb-1">Ready</p>
           <p className="text-2xl font-bold text-green-700">{orders.filter(o => o.status === 'ready').length}</p>
         </div>
-        <div className="glass-effect border-2 border-gray-200 rounded-xl p-4">
-          <p className="text-xs text-gray-600 uppercase mb-1">Delivered</p>
-          <p className="text-2xl font-bold text-gray-700">{orders.filter(o => o.status === 'delivered').length}</p>
-        </div>
       </div>
 
-      {/* Filter Tabs */}
+      {/* Payment Filter */}
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={() => setPaymentFilter('all')}
+          className={`px-4 py-2 rounded-lg font-medium transition ${
+            paymentFilter === 'all'
+              ? 'bg-pista-500 text-white shadow-md'
+              : 'bg-white text-gray-700 border-2 border-pista-200 hover:border-pista-400'
+          }`}
+        >
+          All Payments
+        </button>
+        <button
+          onClick={() => setPaymentFilter('paid')}
+          className={`px-4 py-2 rounded-lg font-medium transition ${
+            paymentFilter === 'paid'
+              ? 'bg-green-500 text-white shadow-md'
+              : 'bg-white text-gray-700 border-2 border-green-200 hover:border-green-400'
+          }`}
+        >
+          Paid ({paidOrders.length})
+        </button>
+        <button
+          onClick={() => setPaymentFilter('unpaid')}
+          className={`px-4 py-2 rounded-lg font-medium transition ${
+            paymentFilter === 'unpaid'
+              ? 'bg-red-500 text-white shadow-md'
+              : 'bg-white text-gray-700 border-2 border-red-200 hover:border-red-400'
+          }`}
+        >
+          Unpaid ({unpaidOrders.length})
+        </button>
+      </div>
+
+      {/* Status Filter Tabs */}
       <div className="flex gap-2 mb-6 flex-wrap">
         {(['all', 'pending', 'preparing', 'ready', 'delivered'] as const).map((status) => (
           <button
@@ -68,69 +149,95 @@ export default function OrdersPage() {
         ))}
       </div>
 
-      {/* Orders Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {filteredOrders.map((order) => (
-          <div key={order.id} className="glass-effect border-2 border-pista-200 rounded-xl p-5 hover:shadow-xl transition">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-xl font-bold text-pista-900">Room {order.roomId}</h3>
-                <p className="text-xs text-gray-500 font-mono">{order.id}</p>
-                <p className="text-sm text-gray-500">
-                  {new Date(order.timestamp).toLocaleTimeString()} - {new Date(order.timestamp).toLocaleDateString()}
-                </p>
+      {/* Orders Grouped by Room */}
+      <div className="space-y-4">
+        {ordersByRoom.map(([roomId, roomOrders]) => {
+          const roomTotal = roomOrders.reduce((sum, order) => sum + order.total, 0);
+          const roomPaid = roomOrders.filter(o => o.paymentStatus === 'paid').reduce((sum, order) => sum + order.total, 0);
+          const roomUnpaid = roomOrders.filter(o => o.paymentStatus === 'unpaid').reduce((sum, order) => sum + order.total, 0);
+          
+          return (
+            <div key={roomId} className="glass-effect border-2 border-pista-300 rounded-xl p-4 bg-gradient-to-br from-white to-pista-50">
+              {/* Room Header */}
+              <div className="flex justify-between items-center mb-3 pb-3 border-b-2 border-pista-200">
+                <div>
+                  <h2 className="text-xl font-bold text-pista-900">Room {roomId}</h2>
+                  <p className="text-xs text-gray-600">{roomOrders.length} order{roomOrders.length > 1 ? 's' : ''}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-gray-600 uppercase">Room Total</p>
+                  <p className="text-2xl font-bold text-pista-700">₹{roomTotal}</p>
+                  <div className="flex gap-2 mt-1 justify-end">
+                    <span className="text-xs text-green-700 font-semibold">Paid: ₹{roomPaid}</span>
+                    <span className="text-xs text-red-700 font-semibold">Unpaid: ₹{roomUnpaid}</span>
+                  </div>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-2xl font-bold text-pista-700">₹{order.total}</p>
-                <span className={`inline-block text-xs px-3 py-1 rounded-full font-semibold border-2 mt-1 ${getStatusColor(order.status)}`}>
-                  {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                </span>
-              </div>
-            </div>
 
-            <div className="mb-4">
-              <p className="text-xs text-pista-600 font-semibold uppercase mb-2">Items Ordered ({order.items.length})</p>
-              <ul className="space-y-2">
-                {order.items.map((item, i) => (
-                  <li key={i} className="flex items-center justify-between bg-pista-50 p-2 rounded-lg border border-pista-200">
-                    <div className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 bg-pista-500 rounded-full"></span>
-                      <span className="text-sm text-gray-700 font-medium">{item.name}</span>
-                      <span className="text-xs text-gray-500">x{item.quantity}</span>
+              {/* Orders for this room */}
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-3">
+                {roomOrders.map((order) => (
+                  <div key={order.id} className={`bg-white border-2 rounded-lg p-3 hover:shadow-lg transition ${
+                    order.paymentStatus === 'paid' ? 'border-green-300' : 'border-red-300'
+                  }`}>
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <p className="text-xs text-gray-500 font-mono">{order.id}</p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(order.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-pista-700">₹{order.total}</p>
+                        <span className={`inline-block text-xs px-2 py-0.5 rounded-full font-semibold border ${
+                          order.paymentStatus === 'paid' 
+                            ? 'bg-green-100 text-green-700 border-green-300' 
+                            : 'bg-red-100 text-red-700 border-red-300'
+                        }`}>
+                          {order.paymentStatus === 'paid' ? '✓ PAID' : '⚠ UNPAID'}
+                        </span>
+                        <span className={`inline-block text-xs px-2 py-0.5 rounded-full font-semibold border mt-1 ${getStatusColor(order.status)}`}>
+                          {order.status.toUpperCase()}
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-sm font-bold text-pista-700">₹{item.price * item.quantity}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
 
-            {order.notes && (
-              <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                <p className="text-xs text-yellow-700 font-semibold mb-1">Notes:</p>
-                <p className="text-sm text-gray-700">{order.notes}</p>
-              </div>
-            )}
+                    <div className="mb-2">
+                      <p className="text-xs text-pista-600 font-semibold mb-1">ITEMS ({order.items.length})</p>
+                      <ul className="space-y-1">
+                        {order.items.map((item, i) => (
+                          <li key={i} className="flex items-center justify-between text-xs bg-pista-50 p-1.5 rounded border border-pista-200">
+                            <span className="text-gray-700 font-medium">{item.name} x{item.quantity}</span>
+                            <span className="font-bold text-pista-700">₹{item.price * item.quantity}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
 
-            <div>
-              <p className="text-xs text-pista-600 font-semibold uppercase mb-2">Update Status</p>
-              <div className="flex gap-2 flex-wrap">
-                {(['pending', 'preparing', 'ready', 'delivered'] as const).map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => updateOrderStatus(order.id, status)}
-                    className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition ${
-                      order.status === status
-                        ? 'bg-pista-500 text-white shadow-md'
-                        : 'bg-white text-gray-600 hover:bg-gray-100 border-2 border-gray-300'
-                    }`}
-                  >
-                    {status.charAt(0).toUpperCase() + status.slice(1)}
-                  </button>
+                    <div>
+                      <p className="text-xs text-pista-600 font-semibold mb-1">UPDATE STATUS</p>
+                      <div className="flex gap-1 flex-wrap">
+                        {(['pending', 'preparing', 'ready', 'delivered'] as const).map((status) => (
+                          <button
+                            key={status}
+                            onClick={() => updateOrderStatus(order.id, status)}
+                            className={`text-xs px-2 py-1 rounded font-semibold transition ${
+                              order.status === status
+                                ? 'bg-pista-500 text-white'
+                                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-300'
+                            }`}
+                          >
+                            {status.charAt(0).toUpperCase() + status.slice(1)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {filteredOrders.length === 0 && (

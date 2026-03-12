@@ -76,6 +76,13 @@ export default function MenuPage() {
             <div className="flex gap-2 sm:gap-3 flex-wrap justify-end">
               <NotificationCenter />
               <Link
+                href={`/orders?roomId=${roomId}`}
+                className="bg-white hover:bg-gray-50 text-pista-700 px-3 sm:px-5 py-2 rounded-lg transition border border-pista-200 font-medium text-xs sm:text-sm shadow-sm whitespace-nowrap"
+              >
+                <span className="hidden sm:inline">📦 Orders</span>
+                <span className="sm:hidden">📦</span>
+              </Link>
+              <Link
                 href={`/cart?roomId=${roomId}`}
                 className="relative bg-pista-500 hover:bg-pista-600 text-white px-3 sm:px-5 py-2 rounded-lg font-bold transition text-xs sm:text-sm shadow-md whitespace-nowrap"
               >
