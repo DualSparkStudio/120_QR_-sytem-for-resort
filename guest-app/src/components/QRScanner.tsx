@@ -74,8 +74,22 @@ export default function QRScanner() {
       if (devices && devices.length > 0) {
         console.log('Found cameras:', devices.length);
         
-        // Use the first available camera (usually back camera on mobile)
-        const cameraId = devices[0].id;
+        // Prefer rear camera (environment facing) on mobile devices
+        let cameraId = devices[0].id;
+        
+        // Look for rear/back/environment camera
+        const rearCamera = devices.find(device => 
+          device.label.toLowerCase().includes('back') ||
+          device.label.toLowerCase().includes('rear') ||
+          device.label.toLowerCase().includes('environment')
+        );
+        
+        if (rearCamera) {
+          cameraId = rearCamera.id;
+          console.log('Using rear camera:', rearCamera.label);
+        } else {
+          console.log('Using default camera:', devices[0].label);
+        }
         
         await html5QrCode.start(
           cameraId,
