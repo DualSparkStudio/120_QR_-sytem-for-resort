@@ -45,9 +45,19 @@ export default function CartPage() {
 
     setIsProcessing(true);
 
+    // Get Razorpay key from environment
+    const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+    
+    if (!razorpayKey) {
+      console.error('Razorpay key not found in environment variables');
+      alert('Payment configuration error. Please contact support.');
+      setIsProcessing(false);
+      return;
+    }
+
     // Razorpay configuration from environment variables
     const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      key: razorpayKey,
       amount: total * 100, // Amount in paise
       currency: 'INR',
       name: 'Grand Valley Resort',
