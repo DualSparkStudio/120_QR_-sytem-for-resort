@@ -45,9 +45,9 @@ export default function CartPage() {
 
     setIsProcessing(true);
 
-    // Razorpay test configuration
+    // Razorpay configuration from environment variables
     const options = {
-      key: 'rzp_test_1DP5mmOlF5G5ag', // Test key - replace with your test key
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       amount: total * 100, // Amount in paise
       currency: 'INR',
       name: 'Grand Valley Resort',
