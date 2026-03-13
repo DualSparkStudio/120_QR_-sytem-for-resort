@@ -18,10 +18,8 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
     { name: 'Dashboard', path: '/admin/dashboard', icon: '📊' },
     { name: 'Orders', path: '/admin/orders', icon: '🛒' },
     { name: 'Services', path: '/admin/services', icon: '🧹' },
-    { name: 'Rooms', path: '/admin/rooms', icon: '🛏️' },
+    { name: 'QR', path: '/admin/rooms', icon: '📱' },
     { name: 'Menu', path: '/admin/menu', icon: '🍽️' },
-    { name: 'Reports', path: '/admin/reports', icon: '📈' },
-    { name: 'Settings', path: '/admin/settings', icon: '⚙️' },
   ];
 
   return (
@@ -159,8 +157,8 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
                   : 'text-gray-700 hover:bg-pista-100'
               }`}
             >
-              <span className="text-base">🛏️</span>
-              <span className="text-[10px] font-medium leading-tight">Rooms</span>
+              <span className="text-base">📱</span>
+              <span className="text-[10px] font-medium leading-tight">QR</span>
             </Link>
             <Link
               href="/admin/menu"
@@ -172,28 +170,6 @@ export default function AdminLayout({ children, onLogout }: AdminLayoutProps) {
             >
               <span className="text-base">🍽️</span>
               <span className="text-[10px] font-medium leading-tight">Menu</span>
-            </Link>
-            <Link
-              href="/admin/reports"
-              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all flex-shrink-0 min-w-[70px] ${
-                pathname === '/admin/reports'
-                  ? 'bg-pista-500 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-pista-100'
-              }`}
-            >
-              <span className="text-base">📈</span>
-              <span className="text-[10px] font-medium leading-tight">Reports</span>
-            </Link>
-            <Link
-              href="/admin/settings"
-              className={`flex flex-col items-center gap-0.5 px-3 py-2 rounded-lg transition-all flex-shrink-0 min-w-[70px] ${
-                pathname === '/admin/settings'
-                  ? 'bg-pista-500 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-pista-100'
-              }`}
-            >
-              <span className="text-base">⚙️</span>
-              <span className="text-[10px] font-medium leading-tight">Settings</span>
             </Link>
           </div>
           {/* Scroll Indicator */}

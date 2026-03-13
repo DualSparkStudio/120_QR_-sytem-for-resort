@@ -36,11 +36,20 @@ export default function OrdersPage() {
       grouped.set(order.roomId, roomOrders);
     });
     
-    // Sort rooms by room number
+    // Sort orders within each room by timestamp (newest first)
+    grouped.forEach((orders, roomId) => {
+      orders.sort((a, b) => {
+        const timeA = new Date(a.timestamp).getTime();
+        const timeB = new Date(b.timestamp).getTime();
+        return timeB - timeA; // Newest first
+      });
+    });
+    
+    // Sort rooms by their latest order timestamp (newest first)
     return Array.from(grouped.entries()).sort((a, b) => {
-      const roomA = parseInt(a[0]) || 0;
-      const roomB = parseInt(b[0]) || 0;
-      return roomA - roomB;
+      const latestA = new Date(a[1][0].timestamp).getTime(); // First order is newest due to sorting above
+      const latestB = new Date(b[1][0].timestamp).getTime();
+      return latestB - latestA; // Room with newest order first
     });
   }, [filteredOrders]);
 
